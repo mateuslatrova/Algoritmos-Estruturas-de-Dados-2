@@ -1,2 +1,2 @@
 # Data-structures-Algorithms
-Keeping some assignments completed along my course "Data Structures and Algorithms ll".
+Keeping some assignments completed along the course "Data Structures and Algorithms ll".
