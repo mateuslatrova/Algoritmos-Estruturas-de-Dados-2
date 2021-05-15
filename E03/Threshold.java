@@ -15,8 +15,7 @@
   Referências: 
     - API das classes Queue, StdDraw, UF, Point2D e Interval1D presen-
     tes em: https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/
-    - recurso do enunciado: GridDeluxe.java - o código foi fortemente
-    baseado nessa implementação.
+    - GridDeluxe.java - meu código foi fortemente baseado nessa implementação.
     - vídeo sobre o método de bissecção: https://www.youtube.com/watch?v=OzFuihxtbtA
     - página que visitei para aprender como arredondar números reais sem truncar:
     https://www.educative.io/edpresso/how-to-convert-a-double-to-int-in-java
@@ -102,8 +101,9 @@ public class Threshold {
     } 
 
     public static void main(String[] args) {
-	    if (args.length <= 1)
-            executionMode = numericalOnly;
+	    executionMode = numericalOnly;
+        if (args.length >= 1)
+            executionMode = graphicalAndNumerical;
         
         Queue<Vertex> vertices = new Queue<Vertex>();
         Interval1D interval = new Interval1D(0, Math.sqrt(2));
