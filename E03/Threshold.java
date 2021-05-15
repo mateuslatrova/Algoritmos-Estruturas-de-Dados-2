@@ -140,7 +140,7 @@ public class Threshold {
                     for (int j = col-1; j <= col+1; j++) {
                         for (Vertex u : grid[i][j]) {
                             double currDist = v.point.distanceTo(u.point);
-                            if (currDist <= d) 
+                            if (currDist <= d && graph.find(v.index) != graph.find(u.index))
                                 graph.union(v.index, u.index);
                         }
                     }
@@ -207,8 +207,8 @@ public class Threshold {
                     grid[row][col].enqueue(p);
 	                p.draw();
                 }
+                StdDraw.show();
             }  
-            StdDraw.show();
         } 
     } 
 }
