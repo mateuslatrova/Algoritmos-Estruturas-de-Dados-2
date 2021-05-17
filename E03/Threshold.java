@@ -45,60 +45,7 @@ public class Threshold {
             point = p;
             index = i;
         }
-
-        //public Point2D getPoint() {
-        //    return point;
-        //}
-//
-        //public int getIndex() {
-        //    return index;
-        //}
     }
-
-    public static void drawGraph(Queue<Vertex> verts, Interval1D interval, double d) {
-        int rows = (int) Math.ceil(1.0 / d);  
-        int cols = (int) Math.ceil(1.0 / d);
-    
-        StdDraw.setCanvasSize(800, 800);
-        StdDraw.setXscale(0, 1);
-        StdDraw.setYscale(0, 1);
-        StdDraw.enableDoubleBuffering();	
-	    StdDraw.setPenColor(StdDraw.BLACK);
-	    StdDraw.setPenRadius(0.005);
-
-        Queue<Point2D>[][] grid = (Queue<Point2D>[][]) new Queue[rows+2][cols+2];
-        for (int i = 0; i <= rows+1; i++) {
-            for (int j = 0; j <= cols+1; j++)
-                grid[i][j] = new Queue<Point2D>();
-        }
-
-	    for (Vertex v : verts) {
-	        double x = v.point.x();
-	        double y = v.point.y();
-	        Point2D p  = new Point2D(x, y);
-
-            int row = 1 + (int) (x * rows);
-            int col = 1 + (int) (y * cols);
-            for (int i = row-1; i <= row+1; i++) {
-                for (int j = col-1; j <= col+1; j++) {
-                    for (Point2D q : grid[i][j]) {
-                        if (interval.contains(p.distanceTo(q))) {
-	    	                StdDraw.setPenRadius(0.02);
-                            StdDraw.setPenColor(StdDraw.RED);
-	    	                p.drawTo(q);
-	    	                StdDraw.setPenRadius(0.002);
-                            StdDraw.setPenColor(StdDraw.BLACK);
-                            continue;
-	    	            }
-                        p.drawTo(q);
-                    }
-                }
-                grid[row][col].enqueue(p);
-	            p.draw();
-            }
-	        StdDraw.show();	
-        }  
-    } 
 
     public static void main(String[] args) {
 	    executionMode = numericalOnly;
@@ -159,24 +106,20 @@ public class Threshold {
 
         String output = "Connectivity threshold in " + interval.toString();
         StdOut.println(output);
-        double d = (interval.max() + interval.min())/2;
         
         if (executionMode == graphicalAndNumerical) {
+            double d = (interval.max() + interval.min())/2;
+            double maxDist = interval.max();
             int rows = (int) Math.ceil(1.0 / d);  
             int cols = (int) Math.ceil(1.0 / d);
-        
+            
             StdDraw.setCanvasSize(800, 800);
             StdDraw.setXscale(0, 1);
             StdDraw.setYscale(0, 1);
             StdDraw.enableDoubleBuffering();	
-	        
-            // for sanity check
-            StdDraw.setPenColor(StdDraw.RED);
-	        StdDraw.setPenRadius(0.02);
-	        (new Point2D(.0, .0)).drawTo(new Point2D(d, .0));
 	        StdDraw.setPenColor(StdDraw.BLACK);
 	        StdDraw.setPenRadius(0.005);
-
+            
             Queue<Point2D>[][] grid = (Queue<Point2D>[][]) new Queue[rows+2][cols+2];
             for (int i = 0; i <= rows+1; i++) {
                 for (int j = 0; j <= cols+1; j++)
@@ -187,28 +130,26 @@ public class Threshold {
 	            double x = v.point.x();
 	            double y = v.point.y();
 	            Point2D p  = new Point2D(x, y);
-
                 int row = 1 + (int) (x * rows);
                 int col = 1 + (int) (y * cols);
                 for (int i = row-1; i <= row+1; i++) {
                     for (int j = col-1; j <= col+1; j++) {
                         for (Point2D q : grid[i][j]) {
-                            if (interval.contains(p.distanceTo(q))) {
-	        	                StdDraw.setPenRadius(0.02);
-                                StdDraw.setPenColor(StdDraw.RED);
-	        	                p.drawTo(q);
-	        	                StdDraw.setPenRadius(0.002);
+                            if (p.distanceTo(q) <= maxDist) {
                                 StdDraw.setPenColor(StdDraw.BLACK);
-                                continue;
-	        	            }
-                            p.drawTo(q);
+                                StdDraw.setPenRadius(0.002);
+                                if (interval.contains(p.distanceTo(q)))
+                                    StdDraw.setPenColor(StdDraw.RED);
+                                p.drawTo(q);
+                                StdDraw.setPenRadius(0.005);
+                            }
                         }
                     }
                     grid[row][col].enqueue(p);
 	                p.draw();
                 }
                 StdDraw.show();
-            }  
+            }   
         } 
     } 
 }
