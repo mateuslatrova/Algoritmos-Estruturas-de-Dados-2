@@ -13,12 +13,12 @@
   NUSP: 12542821
 
   Referências: 
-    - API das classes Queue, StdDraw, UF, Point2D e Interval1D presen-
-    tes em: https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/
-    - GridDeluxe.java - meu código foi fortemente baseado nessa implementação.
-    - vídeo sobre o método de bissecção: https://www.youtube.com/watch?v=OzFuihxtbtA
-    - página que visitei para aprender como arredondar números reais sem truncar:
-    https://www.educative.io/edpresso/how-to-convert-a-double-to-int-in-java
+    - API das classes BST e RedBlackBST presentes em: 
+    https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/
+    - dica do professor Yoshi sobre usar dois inteiros na aula do ida 18-05-2021.
+    - a implementação utilizada foi a de RedBlackBSTPlus.java (S&W). Foram 
+    alterados os atributos da classe Node(adicionei 2 inteiros) e as funções 
+    height, ipl, put, delete, rotateLeft, rotateRight e balance.
 *********************************************************************/
 
 import java.util.NoSuchElementException;
@@ -40,8 +40,9 @@ public class RedBlackBSTDeluxe<Key extends Comparable<Key>, Value> {
         private Node left, right;  // links to left and right subtrees
         private boolean color;     // color of parent link
         private int size;          // subtree count
-        private int h;
-        private int ipl;
+        private int h;             // ipl of subtree
+        private int ipl;           // height of subtree
+        
 
         public Node(Key key, Value val, boolean color, int size) {
             this.key = key;

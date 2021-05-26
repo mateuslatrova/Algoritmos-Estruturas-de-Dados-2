@@ -14,9 +14,10 @@
   NUSP: 12542821
 
   Referências: 
-    - API das classes Queue, StdDraw, UF, Point2D e Interval1D presen-
-    tes em: https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/
-    - a implementação utilizada foi a de BSTPlus.java. Foram alterados
+    - API das classes BST e RedBlackBST presentes em: 
+    https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/
+    - dica do professor Yoshi sobre usar dois inteiros na aula do ida 18-05-2021.
+    - a implementação utilizada foi a de BSTPlus.java(S&W) Foram alterados
     os atributos da classe Node(adicionei 2 inteiros) e as funções height,
     ipl, put e delete.
 *********************************************************************/
@@ -35,7 +36,7 @@ public class BSTDeluxe<Key extends Comparable<Key>,Value> {
         private Node left, right;  // left and right subtrees
         private int size;          // number of nodes in subtree
         private int ipl;           // ipl of subtree
-        private int h;
+        private int h;             // height of subtree
 
         public Node(Key key, Value val, int size, int ipl) {
             this.key = key;
