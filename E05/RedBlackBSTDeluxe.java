@@ -40,6 +40,8 @@ public class RedBlackBSTDeluxe<Key extends Comparable<Key>, Value> {
         private Node left, right;  // links to left and right subtrees
         private boolean color;     // color of parent link
         private int size;          // subtree count
+        private int h;
+        private int ipl;
 
         public Node(Key key, Value val, boolean color, int size) {
             this.key = key;
@@ -88,12 +90,12 @@ public class RedBlackBSTDeluxe<Key extends Comparable<Key>, Value> {
 
     // ipl (slow!)
     public int ipl() {
-	return ipl(root);
+	    return ipl(root);
     }
 
     private int ipl(Node x) {
-	if (x == null) return 0;
-	return ipl(x.left) + ipl(x.right) + x.size - 1;
+	    if (x == null) return 0;
+	    return x.ipl;
     }
 
    /***************************************************************************
@@ -174,7 +176,8 @@ public class RedBlackBSTDeluxe<Key extends Comparable<Key>, Value> {
         if (isRed(h.left)  &&  isRed(h.left.left)) h = rotateRight(h);
         if (isRed(h.left)  &&  isRed(h.right))     flipColors(h);
         h.size = size(h.left) + size(h.right) + 1;
-
+        h.ipl = ipl(h.left) + ipl(h.right) + h.size-1;
+        h.h = 1 + Math.max(height(h.left),height(h.right));
         return h;
     }
 
@@ -307,6 +310,8 @@ public class RedBlackBSTDeluxe<Key extends Comparable<Key>, Value> {
         x.right.color = RED;
         x.size = h.size;
         h.size = size(h.left) + size(h.right) + 1;
+        h.ipl = ipl(h.left) + ipl(h.right) + h.size-1;
+        h.h = 1 + Math.max(height(h.left),height(h.right));
         return x;
     }
 
@@ -321,6 +326,8 @@ public class RedBlackBSTDeluxe<Key extends Comparable<Key>, Value> {
         x.left.color = RED;
         x.size = h.size;
         h.size = size(h.left) + size(h.right) + 1;
+        h.ipl = ipl(h.left) + ipl(h.right) + h.size-1;
+        h.h = 1 + Math.max(height(h.left),height(h.right));
         return x;
     }
 
@@ -372,6 +379,8 @@ public class RedBlackBSTDeluxe<Key extends Comparable<Key>, Value> {
         if (isRed(h.left) && isRed(h.right))     flipColors(h);
 
         h.size = size(h.left) + size(h.right) + 1;
+        h.ipl = ipl(h.left) + ipl(h.right) + h.size-1;
+        h.h = 1 + Math.max(height(h.left),height(h.right));
         return h;
     }
 
@@ -389,7 +398,7 @@ public class RedBlackBSTDeluxe<Key extends Comparable<Key>, Value> {
     }
     private int height(Node x) {
         if (x == null) return -1;
-        return 1 + Math.max(height(x.left), height(x.right));
+        return x.h;
     }
 
    /***************************************************************************
