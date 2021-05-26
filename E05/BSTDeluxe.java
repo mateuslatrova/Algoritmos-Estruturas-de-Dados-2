@@ -16,10 +16,9 @@
   Referências: 
     - API das classes Queue, StdDraw, UF, Point2D e Interval1D presen-
     tes em: https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/
-    - GridDeluxe.java - meu código foi fortemente baseado nessa implementação.
-    - vídeo sobre o método de bissecção: https://www.youtube.com/watch?v=OzFuihxtbtA
-    - página que visitei para aprender como arredondar números reais sem truncar:
-    https://www.educative.io/edpresso/how-to-convert-a-double-to-int-in-java
+    - a implementação utilizada foi a de BSTPlus.java. Foram alterados
+    os atributos da classe Node(adicionei 2 inteiros) e as funções height,
+    ipl, put e delete.
 *********************************************************************/
 
 import java.util.NoSuchElementException;
@@ -28,17 +27,17 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Queue;
 
 public class BSTDeluxe<Key extends Comparable<Key>,Value> {
-    private Node root;             // root of BSTPlus
+    private Node root;             // root of BSTDeluxe
 
     private class Node {
         private Key key;           // sorted by key
         private Value val;         // associated data
         private Node left, right;  // left and right subtrees
         private int size;          // number of nodes in subtree
+        private int ipl;           // ipl of subtree
         private int h;
-        private int ipl;
 
-        public Node(Key key, Value val, int size) {
+        public Node(Key key, Value val, int size, int ipl) {
             this.key = key;
             this.val = val;
             this.size = size;
@@ -61,7 +60,7 @@ public class BSTDeluxe<Key extends Comparable<Key>,Value> {
     }
     private int height(Node x) {
         if (x == null) return -1;
-        return 1 + Math.max(height(x.left), height(x.right));
+        return x.h; 
     }
 
     // ipl (slow!)
@@ -71,7 +70,7 @@ public class BSTDeluxe<Key extends Comparable<Key>,Value> {
     
     private int ipl(Node x) {
         if (x == null) return 0;
-            return ipl(x.left) + ipl(x.right) + x.size - 1;
+        return x.ipl;
     }
 
     /**
@@ -151,12 +150,14 @@ public class BSTDeluxe<Key extends Comparable<Key>,Value> {
     }
 
     private Node put(Node x, Key key, Value val) {
-        if (x == null) return new Node(key, val, 1);
+        if (x == null) return new Node(key, val, 1, 0);
         int cmp = key.compareTo(x.key);
         if      (cmp < 0) x.left  = put(x.left,  key, val);
         else if (cmp > 0) x.right = put(x.right, key, val);
         else              x.val   = val;
         x.size = 1 + size(x.left) + size(x.right);
+        x.ipl = ipl(x.left) + ipl(x.right) + x.size-1;
+        x.h = 1 + Math.max(height(x.left),height(x.right));
         return x;
     }
 
@@ -225,6 +226,8 @@ public class BSTDeluxe<Key extends Comparable<Key>,Value> {
             x.left = t.left;
         } 
         x.size = size(x.left) + size(x.right) + 1;
+        x.ipl = ipl(x.left) + ipl(x.right) + x.size-1;
+        x.h = 1 + Math.max(height(x.left),height(x.right));
         return x;
     } 
 
