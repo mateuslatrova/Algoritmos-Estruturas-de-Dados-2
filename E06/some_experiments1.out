@@ -1,0 +1,118 @@
+$ javac -version
+javac 11.0.7
+$ java -version
+openjdk version "11.0.7" 2020-04-14
+OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.7+10)
+OpenJDK 64-Bit Server VM AdoptOpenJDK (build 11.0.7+10, mixed mode)
+
+Execução básica:
+
+$ java-algs4 Timer DATA/tinyTale.txt ++++++++ -v > tiny.out
+Time to build FrequencyTable: 0.001
+Time to build FrequencyTableRB: 0.001
+Time to build FrequencyTableSCL: 0.001
+Time to build FrequencyTableSC: 0.001
+Time to build FrequencyTableLP: 0.0
+Time to build FrequencyTableLPP: 0.0
+Time to build FrequencyTableLPUH: 0.0
+Time to build FrequencyTableLPUHP: 0.0
+$ head tiny.out
+       2  age
+       1  belief
+       1  best
+       1  darkness
+       1  despair
+       2  epoch
+       1  foolishness
+       1  hope
+       1  incredulity
+      10  it
+
+Experimentos com "dados reais"
+
+$ java-algs4 Timer DATA/Gutenberg/bible_KJ.txt ++++++++
+Time to build FrequencyTable: 0.345
+Time to build FrequencyTableRB: 0.27
+Time to build FrequencyTableSCL: 0.176
+Time to build FrequencyTableSC: 0.131
+Time to build FrequencyTableLP: 0.069
+Time to build FrequencyTableLPP: 0.07
+Time to build FrequencyTableLPUH: 0.113
+Time to build FrequencyTableLPUHP: 0.106
+$ java-algs4 Timer DATA/jean.txt ++++++++
+Time to build FrequencyTable: 0.218
+Time to build FrequencyTableRB: 0.253
+Time to build FrequencyTableSCL: 0.226
+Time to build FrequencyTableSC: 0.129
+Time to build FrequencyTableLP: 0.062
+Time to build FrequencyTableLPP: 0.061
+Time to build FrequencyTableLPUH: 0.105
+Time to build FrequencyTableLPUHP: 0.088
+$ java-algs4 Timer DATA/leipzig100k.txt ++.+++++
+Time to build FrequencyTable: 1.051
+Time to build FrequencyTableRB: 1.212
+Time to build FrequencyTableSC: 0.551
+Time to build FrequencyTableLP: 0.182
+Time to build FrequencyTableLPP: 0.191
+Time to build FrequencyTableLPUH: 0.349
+Time to build FrequencyTableLPUHP: 0.392
+$ java-algs4 Timer DATA/leipzig200k.txt ++.+++++
+Time to build FrequencyTable: 2.188
+Time to build FrequencyTableRB: 2.389
+Time to build FrequencyTableSC: 1.144
+Time to build FrequencyTableLP: 0.337
+Time to build FrequencyTableLPP: 0.382
+Time to build FrequencyTableLPUH: 0.647
+Time to build FrequencyTableLPUHP: 0.673
+$ java-algs4 Timer DATA/leipzig1m.txt ++.+++++
+Time to build FrequencyTable: 10.526
+Time to build FrequencyTableRB: 13.873
+Time to build FrequencyTableSC: 6.623
+Time to build FrequencyTableLP: 1.82
+Time to build FrequencyTableLPP: 1.867
+Time to build FrequencyTableLPUH: 3.222
+Time to build FrequencyTableLPUHP: 3.233
+
+Experimentos com dados gerados "maldosamente"
+
+$ java-algs4 MGenerator 1000000 20 ABC DEF 201905 | java-algs4 Timer - ++.+++++
+Time to build FrequencyTable: 32.263
+Time to build FrequencyTableRB: 32.576
+Time to build FrequencyTableSC: 1.797
+Time to build FrequencyTableLP: 0.32
+Time to build FrequencyTableLPP: 0.272
+Time to build FrequencyTableLPUH: 220.259
+Time to build FrequencyTableLPUHP: 1.994
+$ java-algs4 MGenerator 10000 20 Aa BB 201905 | java-algs4 Timer - ++.+++++
+Time to build FrequencyTable: 0.122
+Time to build FrequencyTableRB: 0.14
+Time to build FrequencyTableSC: 0.726
+Time to build FrequencyTableLP: 1.152
+Time to build FrequencyTableLPP: 1.15
+Time to build FrequencyTableLPUH: 0.065
+Time to build FrequencyTableLPUHP: 0.021
+$ java-algs4 MGenerator 50000 20 Aa BB 201905 | java-algs4 Timer - ++.+++++
+Time to build FrequencyTable: 0.713
+Time to build FrequencyTableRB: 0.738
+Time to build FrequencyTableSC: 24.473
+Time to build FrequencyTableLP: 27.522
+Time to build FrequencyTableLPP: 20.643
+Time to build FrequencyTableLPUH: 0.288
+Time to build FrequencyTableLPUHP: 0.067
+$ java-algs4 MGenerator 50000 20 ABCD BBBB 201905 | java-algs4 Timer - ++.+++++
+Time to build FrequencyTable: 1.157
+Time to build FrequencyTableRB: 1.183
+Time to build FrequencyTableSC: 0.363
+Time to build FrequencyTableLP: 0.068
+Time to build FrequencyTableLPP: 0.024
+Time to build FrequencyTableLPUH: 2.094
+Time to build FrequencyTableLPUHP: 0.107
+$ java-algs4 MGenerator 100000 20 ABCD BBBB 201905 | java-algs4 Timer - ++.+++++
+Time to build FrequencyTable: 2.625
+Time to build FrequencyTableRB: 2.66
+Time to build FrequencyTableSC: 0.815
+Time to build FrequencyTableLP: 0.133
+Time to build FrequencyTableLPP: 0.038
+Time to build FrequencyTableLPUH: 6.518
+Time to build FrequencyTableLPUHP: 0.228
+
