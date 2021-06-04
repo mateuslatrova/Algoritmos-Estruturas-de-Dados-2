@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.LinearProbingHashST;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.In;
 import java.lang.Math;
@@ -11,25 +12,30 @@ public class HashingProfile {
     private static int k;
     private static int M;
     private static int N;
-    private static int logM;
+    private static double logM;
     private static int hits;
     private static boolean prime;     // to choose the type of hash table.
     private static boolean universal; // to choose the type of hash table.
     private static Mode mode;
-    private static LinearProbingHashST hashT; // values are hashing function values.
+    private static LinearProbingHashST<String,Integer> hashT; // values are hashing function values.
     private static FrequencyTableLP freq; 
-    private static Queue<Integer> hash;
 
     enum Mode { prime, primeAndUniv, universal, std };
 
-    // Simple:
+    // Standard:
     private static int hash(String key) {
         int h = key.hashCode();
         h ^= (h >>> 20) ^ (h >>> 12) ^ (h >>> 7) ^ (h >>> 4);
-        return h & (m-1);
+        return h & (M-1);
+    }
+
+    // Prime:
+    private int hashPrime(String key) {
+        int t = key.hashCode() & 0x7fffffff;
+        return t % M;
     }
     
-    // Prime/PrimeAndUniv/Universal:
+    // PrimeAndUniv/Universal:
     private static int hashU(String key, int M) {
         int h = 0, a = 31415, b = 27183;
         String s = key;
@@ -49,7 +55,7 @@ public class HashingProfile {
     }
 
     private static int findClosestPrime(int k) {
-        int m = Math.pow(2, k);
+        int m = (int) Math.pow((double)2,(double) k);
         while (!isPrime(m))
             m -= 1;
         return m;
@@ -74,15 +80,6 @@ public class HashingProfile {
         }
     }
 
-    // Copied from Histogram.java()
-    public static void plotBars(double[] a) {
-        int n = a.length;
-        StdDraw.setXscale(-.5, n - .5);
-        for (int i = 0; i < n; i++) {
-            StdDraw.filledRectangle(i, a[i]/2, 0.35, a[i]/2);
-        }
-    }
-
     public static void main(String[] args) {
         k = Integer.parseInt(args[0]);
         
@@ -92,7 +89,7 @@ public class HashingProfile {
         freq = new FrequencyTableLP();
 
         if (mode == Mode.std || mode == Mode.universal) {
-            M = Math.pow(2,k);
+            M = (int) Math.pow((double)2,(double) k);
             logM = Math.log((double) M);
         } else {
             M = findClosestPrime(k);
@@ -100,7 +97,7 @@ public class HashingProfile {
         }
 
         In in = new In();
-        Words words = new words(in);
+        Words words = new Words(in);
         String word = words.nextWord();
 
         while (word != null) {
@@ -117,22 +114,22 @@ public class HashingProfile {
 
         // first output:
         StdOut.printf("M = %d\n", M);
-        StdOut.printf("M log M = %f\n", M*logM);
+        StdOut.printf("M log M = %.15f\n", M*logM);
         StdOut.printf("N = %d\n", N);
-        StdOut.printf("N/M = %f\n", N/M);
+        StdOut.printf("N/M = %.15f\n", N/(double)M);
 
         // finding and printing hits value:
-        SET<Integer> aux = new SET<Integer>();
-        aux.add(hash.peek());
-        hits = 1;
-        for (Integer x : hash) {
-            if (!aux.contains(x)) {
-                hits++;
-                aux.add(x);
-            }
+        SET<Integer> image = new SET<Integer>();
+
+        for (String s: hashT.keys()) {
+            int hashVal = hashT.get(s);
+            if (!image.contains(hashVal))
+                image.add(hashVal);
         }
 
-        StdOut.printf("hits = %d", hits);
+        hits = image.size();
+
+        StdOut.printf("hits = %d\n", hits);
     
         // draw histogram.
         if (args.length >= 4) {
@@ -140,7 +137,7 @@ public class HashingProfile {
             StdDraw.setXscale(-M/10.0, 1.1*M - 1);
             StdDraw.setYscale(-.1, 1.1);
 
-            double hashFreq[] = new int[M];
+            double hashFreq[] = new double[M];
             double max = 0.;
 
             // Getting frequencies and finding the maximum one.
@@ -159,9 +156,9 @@ public class HashingProfile {
             }
         }
 
-        // print frequencies and hashes:
+        // finding and printing frequencies and hashes:
         if (args.length >= 5) {
-            Queue<String> keys = hashT.keys();
+            Iterable<String> keys = hashT.keys();
 
             for (int i = 0; i < M; i++) {
                 Queue<String> wordsByHash = new Queue<String>();
@@ -170,11 +167,11 @@ public class HashingProfile {
                         wordsByHash.enqueue(s);
                 }
 
-                int f = wordsByHash.length; // frequency of hashing value.
+                int f = wordsByHash.size(); // frequency of hashing value.
                 if (f > 0) {
                     StdOut.printf("[ %d] %d:\n", f, i);
                     for (String s : wordsByHash) {
-                        StdOut.println(s);
+                        StdOut.printf("  %s\n", s);
                     }
                 }
             }
