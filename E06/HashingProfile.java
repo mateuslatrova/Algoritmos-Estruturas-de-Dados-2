@@ -22,6 +22,7 @@ public class HashingProfile {
 
     enum Mode { prime, primeAndUniv, universal, std };
 
+    // PrimeAndUniv.
     private int hashU(Key key, int p) {
         int h = 0, a = 31415, b = 27183;
         String s = (String) key;
@@ -29,6 +30,8 @@ public class HashingProfile {
             h = ((a*h + s.charAt(i)) & 0x7fffffff) % p;
         return h;
     }
+
+    
 
 
 
