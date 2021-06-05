@@ -1,24 +1,19 @@
 import edu.princeton.cs.algs4.LinearProbingHashST;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.SeparateChainingHashST;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Quick3string;
 import java.lang.Math;
 
 public class HashingProfile {
     
-    private static int k;
-    private static int M; // size of hash table
-    private static int N; // number of different words in the ST.
-    private static double logM;
-    private static int hits; // cardinality of the image of the hashing function.
-    private static boolean prime = false;     // to choose the type of hash table.
-    private static boolean universal = false; // to choose the type of hash table.
-    private static Mode mode;
     // All possible types of Hash table needed for the exercise:
-    private static LinearProbingHashST<String,Integer> stdST;
+    //private static LinearProbingHashST<String,Integer> stdST;
+    private static SeparateChainingLiteHashST<String,Integer> HT;
     private static LinearProbingHashPrimesST<String,Integer> primesST;
     private static LinearProbingHashPUHST<String,Integer> PUHST;
     private static LinearProbingHashUHST<String,Integer> UHST;
@@ -26,14 +21,17 @@ public class HashingProfile {
     enum Mode { prime, primeAndUniv, universal, standard };
 
     // For LinearProbingHashST
-    private static int hash(String key) {
-        int h = key.hashCode();
-        h ^= (h >>> 20) ^ (h >>> 12) ^ (h >>> 7) ^ (h >>> 4);
-        return h & (M-1);
-    }
+    //private static int hash(String key, int M) {
+    //    int h = key.hashCode();
+    //    h ^= (h >>> 20) ^ (h >>> 12) ^ (h >>> 7) ^ (h >>> 4);
+    //    return h & (M-1);
+    //}
+    private static int hash(String key, int M) {
+        return (key.hashCode() & 0x7fffffff) % M;
+    } 
 
     // For LinearProbingHashPrimesST
-    private static int hashPrime(String key) {
+    private static int hashPrime(String key, int M) {
         int t = key.hashCode() & 0x7fffffff;
         return t % M;
     }
@@ -50,88 +48,104 @@ public class HashingProfile {
     private static boolean isPrime(int n) {
         if (n == 1) return false;
         for (int i = 2; i <= Math.sqrt(n); i++) {
-            if (n % i == 0) {
+            if (n % i == 0) 
                 return false;
-            }
         }
         return true;
     }
 
-    private static int findClosestPrime(int k) {
-        int m = (int) Math.pow((double)2,(double) k);
-        while (!isPrime(m))
+    private static Integer findClosestPrime(Integer k) {
+        Integer m = (int) Math.pow((double)2,(double) k);
+        while (!isPrime(m)) {
             m -= 1;
+        }
         return m;
+        
     }
 
-    private static void chooseMode(String[] args) {
-        if (args[1] == "-p")
-            prime = true;
-        if (args[2] == "-u")
-            universal = true;
-
-        if (prime) {
-            if (universal)
-                mode = Mode.primeAndUniv;
-            else
-                mode = Mode.prime;
-        } else {
-            if (universal)
-                mode = Mode.universal;
+    private static Mode chooseMode(String[] args) {
+        if (args[1] == "-p") {
+            if (args[2] == "-u") 
+                return Mode.primeAndUniv;
             else 
-                mode = Mode.standard;
-        }
-
-        // Initializing chosen hash table, M and logM.
-        switch (mode) {
-            case standard: 
-                stdST = new LinearProbingHashST<String,Integer>();
-                M = (int) Math.pow((double)2,(double) k);
-                logM = Math.log((double) M);
-                break;
-            case universal: 
-                primesST = new LinearProbingHashPrimesST<String,Integer>();
-                M = (int) Math.pow((double)2,(double) k);
-                logM = Math.log((double) M);
-                break;
-            case prime: 
-                PUHST = new LinearProbingHashPUHST<String,Integer>();
-                M = findClosestPrime(k);
-                logM = Math.log((double) M);
-                break;
-            case primeAndUniv: 
-                UHST = new LinearProbingHashUHST<String,Integer>();
-                M = findClosestPrime(k);
-                logM = Math.log((double) M);
-                break;
+                return Mode.prime;
+        } else {
+            if (args[2] == "-u") 
+                return Mode.universal;
+            else
+                return Mode.standard;
         }
     }
 
-    private static void fillHashTable() {
+    private static void initializeHashTable(Mode mode) {
+        if (mode.equals(Mode.standard)) 
+            stdST = new SeparateChainingLiteHashST<String,Integer>();
+        else if (mode.equals(Mode.prime))
+            primesST = new LinearProbingHashPrimesST<String,Integer>(); 
+        else if (mode.equals(Mode.primeAndUniv))
+            PUHST = new LinearProbingHashPUHST<String,Integer>();
+        else
+            UHST = new LinearProbingHashUHST<String,Integer>();
+        //stdST = new LinearProbingHashST<String,Integer>();
+        //    switch (mode) {
+        //    case standard: 
+        //        stdST = new LinearProbingHashST<String,Integer>();
+        //        break;
+        //    case universal: 
+        //        primesST = new LinearProbingHashPrimesST<String,Integer>();
+        //        break;
+        //    case prime: 
+        //        PUHST = new LinearProbingHashPUHST<String,Integer>();
+        //        break;
+        //    case primeAndUniv: 
+        //        UHST = new LinearProbingHashUHST<String,Integer>();
+        //        break;
+        //    default:
+        //        StdOut.println("Erro: nenhum dos possíveis modos escolhidos.");
+        //}
+    }
+
+    private static int findM(Mode mode, int k) {
+        if (mode.equals(Mode.standard) || mode.equals(Mode.universal))
+            return (int) Math.pow((double)2,(double) k); 
+        else
+            return findClosestPrime(k);
+    }
+
+    private static double findLogM(int M) {
+        return Math.log((double) M);
+    }
+
+    private static void fillHashTable(Mode mode, Integer M) {
         In in = new In();
         Words words = new Words(in);
         String word = words.nextWord();
-        
+        int m;
+
         switch (mode) {
-            case standard:
+            case standard:        
                 while (word != null) {
-                    stdST.put(word,hash(word));
+                    //m = stdST.size();
+                    stdST.put(word,hash(word,M));
                     word = words.nextWord();
                 }
                 break;
             case universal:
                 while (word != null) {
+                    //m = UHST.size();
                     UHST.put(word,hashU(word,M)); 
                     word = words.nextWord();    
                 }
                 break;
             case prime:
+                //m = primesST.size();
                 while (word != null) {
-                    primesST.put(word,hashPrime(word));
+                    primesST.put(word,hashPrime(word,M));
                     word = words.nextWord();
                 }
                 break;    
             case primeAndUniv:
+                //m = PUHST.size();
                 while (word != null) {
                     PUHST.put(word,hashU(word,M)); 
                     word = words.nextWord();
@@ -140,7 +154,7 @@ public class HashingProfile {
         }
     }
 
-    private static int findN() {
+    private static int findN(Mode mode) {
         switch (mode) {
             case standard:
                 return stdST.size();
@@ -150,20 +164,21 @@ public class HashingProfile {
                 return primesST.size();
             case primeAndUniv:
                 return PUHST.size();
+            default:
+                return 0;
         }
-        return 0;
     }
 
-    private static void firstOutput() {
+    private static void firstOutput(Integer M, Double logM, Integer N) {
         StdOut.printf("M = %d\n", M);
         StdOut.printf("M log M = %.15f\n", M*logM);
         StdOut.printf("N = %d\n", N);
         StdOut.printf("N/M = %.15f\n", N/(double)M);
     }
 
-    private static void findAndPrintHits() {
+    private static void findAndPrintHits(Mode mode) {
         SET<Integer> image = new SET<Integer>();
-
+        int hits = 0;
         switch (mode) {
             case standard:
                 for (String s: stdST.keys()) {
@@ -198,7 +213,7 @@ public class HashingProfile {
         StdOut.printf("hits = %d\n", hits);
     }
 
-    private static void drawHistogram() {
+    private static void drawHistogram(Mode mode, Integer M) {
         StdDraw.setCanvasSize(800,800);
         StdDraw.setXscale(-M/10.0, 1.1*M - 1);
         StdDraw.setYscale(-.1, 1.1);
@@ -252,22 +267,35 @@ public class HashingProfile {
         }
     }
 
-    private static void secondOutput() {
-        // Getting frequencies and finding the maximum one.
+    private static void secondOutput(Mode mode, Integer M) {
         Iterable<String> keys;
         switch (mode) {
             case standard:
                 keys = stdST.keys();
 
                 for (int i = 0; i < M; i++) {
-                    Queue<String> wordsByHash = new Queue<String>();
+                    Queue<String> aux = new Queue<String>();
+                    String[] wordsByHash;
+                    int f = 0;
                     for (String s: keys) {
-                        if (stdST.get(s) == i) 
-                            wordsByHash.enqueue(s);
+                        if (stdST.get(s) == i) { 
+                            aux.enqueue(s);
+                            f++;
+                        }
                     }
-                    int f = wordsByHash.size(); // frequency of hashing value.
+
+                    wordsByHash = new String[f];
+
+                    for (int j = 0; j < f; j++) {
+                        wordsByHash[j] = aux.dequeue();
+                    }
+
+                    Quick3string.sort(wordsByHash); // sorting
+                    
+                    // printing:
                     if (f > 0) {
                         StdOut.printf("[ %d] %d:\n", f, i);
+                        
                         for (String s : wordsByHash) {
                             StdOut.printf("  %s\n", s);
                         }
@@ -332,22 +360,48 @@ public class HashingProfile {
     }
 
     public static void main(String[] args) {
-        k = Integer.parseInt(args[0]);
-    
-        chooseMode(args);
-
-        fillHashTable();
-
-        N = findN(); 
-
-        firstOutput();
+        Integer k =   Integer.parseInt(args[0]);
+        Mode mode =   Mode.standard;
         
-        findAndPrintHits();
+        if (args[1].equals("-p") && args[2].equals("-u")) 
+            mode = Mode.primeAndUniv;
+        else if (args[1].equals("-p") && args[2].equals("-s"))  
+            mode = Mode.prime;
+        else if (args[1].equals("-2") && args[2].equals("-u"))
+            mode = Mode.universal;
+        else if (args[1].equals("-2") && args[2].equals("-s"))
+            mode = Mode.standard;
+
+        Integer M =   findM(mode,k); // size of hash table
+        Double logM = findLogM(M);
+       
+        switch (mode) {
+            case standard:
+                StdOut.println("Std");
+                break;
+            case universal:
+                StdOut.println("Universal");
+                break;
+            case prime:
+                StdOut.println("Prime");
+                break;
+            case primeAndUniv:
+                StdOut.println("Prime and Universal");
+                break;
+        }
+
+        initializeHashTable(mode);
+        fillHashTable(mode,M);
+
+        Integer N =   findN(mode); // number of different words in the ST.
+
+        firstOutput(M,logM,N);
+        findAndPrintHits(mode);
     
         if (args.length >= 4) 
-            drawHistogram();
+            drawHistogram(mode,M);
 
         if (args.length >= 5) 
-            secondOutput();
+            secondOutput(mode,M);
     }
 }
