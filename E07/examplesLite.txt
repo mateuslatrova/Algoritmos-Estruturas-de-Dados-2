@@ -1,0 +1,112 @@
+$ java-algs4 TSTPlusClientLite shellsST.txt 
+keys(""):
+by 4
+sea 6
+sells 1
+she 0
+shells 3
+shore 7
+the 5
+
+min: by
+max: the
+
+What do you want?
+1. longestPrefixOf()
+2. keysWithPrefix()
+3. keysThatMatch()
+4. keysThatStartWith()
+5. minWithPrefix()
+6. maxWithPrefix()
+0. to be left alone
+Your choice: 4
+Query: .h
+she
+shells
+shore
+the
+
+What do you want?
+1. longestPrefixOf()
+2. keysWithPrefix()
+3. keysThatMatch()
+4. keysThatStartWith()
+5. minWithPrefix()
+6. maxWithPrefix()
+0. to be left alone
+Your choice: 5
+Query: s
+sea
+
+What do you want?
+1. longestPrefixOf()
+2. keysWithPrefix()
+3. keysThatMatch()
+4. keysThatStartWith()
+5. minWithPrefix()
+6. maxWithPrefix()
+0. to be left alone
+Your choice: 6
+Query: sh
+shore
+
+What do you want?
+1. longestPrefixOf()
+2. keysWithPrefix()
+3. keysThatMatch()
+4. keysThatStartWith()
+5. minWithPrefix()
+6. maxWithPrefix()
+0. to be left alone
+Your choice: 0
+$ java-algs4 TSTPlusClientLite DATA/Pwords
+min: Aarão
+max: útil
+
+What do you want?
+1. longestPrefixOf()
+2. keysWithPrefix()
+3. keysThatMatch()
+4. keysThatStartWith()
+5. minWithPrefix()
+6. maxWithPrefix()
+0. to be left alone
+Your choice: 4
+Query: ..a.e.i.o
+aparecido
+aparecidos
+
+What do you want?
+1. longestPrefixOf()
+2. keysWithPrefix()
+3. keysThatMatch()
+4. keysThatStartWith()
+5. minWithPrefix()
+6. maxWithPrefix()
+0. to be left alone
+Your choice: 5
+Query: peram
+perambula
+
+What do you want?
+1. longestPrefixOf()
+2. keysWithPrefix()
+3. keysThatMatch()
+4. keysThatStartWith()
+5. minWithPrefix()
+6. maxWithPrefix()
+0. to be left alone
+Your choice: 6
+Query: peram
+perambuláveis
+
+What do you want?
+1. longestPrefixOf()
+2. keysWithPrefix()
+3. keysThatMatch()
+4. keysThatStartWith()
+5. minWithPrefix()
+6. maxWithPrefix()
+0. to be left alone
+Your choice: 0
+$ 
