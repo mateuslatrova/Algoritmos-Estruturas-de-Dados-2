@@ -1,42 +1,32 @@
-/******************************************************************************
- *  Compilation:  javac TSTMinus.java
- *  Execution:    java TSTMinus < words.txt
- *  Dependencies: StdIn.java
- *  Data files:   https://algs4.cs.princeton.edu/52trie/shellsST.txt
- *
- *  Symbol table with string keys, implemented using a ternary search
- *  trie (TSTMinus).
- *
- *
- *  % java TSTMinus < shellsST.txt
- *  keys(""):
- *  by 4
- *  sea 6
- *  sells 1
- *  she 0
- *  shells 3
- *  shore 7
- *  the 5
- *
- *  longestPrefixOf("shellsort"):
- *  shells
- *
- *  keysWithPrefix("shor"):
- *  shore
- *
- *  keysThatMatch(".he.l."):
- *  shells
- *
- *  % java TSTMinus
- *  theory the now is the time for all good men
- *
- *  Remarks
- *  --------
- *    - can't use a key that is the empty string ""
- *
- *  Fiddled version of TST.java by yk
- * 
- ******************************************************************************/
+/*********************************************************************
+
+  AO PREENCHER ESSE CABEÇALHO COM O MEU NOME E O MEU NÚMERO USP,
+  DECLARO QUE SOU O ÚNICO AUTOR E RESPONSÁVEL POR ESSE PROGRAMA.
+  TODAS AS PARTES ORIGINAIS DESSE EXERCÍCIO-PROGRAMA (EP) FORAM
+  DESENVOLVIDAS E IMPLEMENTADAS POR MIM SEGUINDO AS INSTRUÇÕES DESSE
+  EP E QUE PORTANTO NÃO CONSTITUEM PLÁGIO. DECLARO TAMBÉM QUE SOU
+  RESPONSÁVEL POR TODAS AS CÓPIAS DESSE PROGRAMA E QUE EU NÃO
+  DISTRIBUI OU FACILITEI A SUA DISTRIBUIÇÃO. ESTOU CIENTE DE QUE OS
+  CASOS DE PLÁGIO SÃO PUNIDOS COM REPROVAÇÃO DIRETA NA DISCIPLINA.
+
+  NOME: Mateus Latrova Stephanin
+  NUSP: 12542821
+
+  Referências: 
+    https://www.ime.usp.br/~pf/estruturas-de-dados/aulas/tries.html
+https://beginnersbook.com/2013/12/java-string-substring-method-example/
+https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/suffixtrees.pdf
+https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/TrieST.java
+
+    - API das classes SET e Quick3string presentes em: 
+    https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/
+    - Para plotar o histograma, me baseei no programa Histogram.java
+    (presente em https://www.ime.usp.br/~yoshi/2021i/mac0323/sandbox/2021.05.20/)
+    e na resposta do professor Yoshi na seguinte dúvida do fórum de discussões:
+    https://edisciplinas.usp.br/mod/forum/discuss.php?d=668038
+    - as funções de Hashing usadas(hash, hashU e hashPrime) são uma
+    cópia das presentes nos arquivos .java presentes nos anexos do exercício.
+*********************************************************************/
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -45,7 +35,7 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Queue;
 
 /**
- *  The {@code TSTMinus} class represents an symbol table of key-value
+ *  The {@code TSTPlus} class represents an symbol table of key-value
  *  pairs, with string keys and generic values.
  *  It supports the usual <em>put</em>, <em>get</em>, <em>contains</em>,
  *  <em>delete</em>, <em>size</em>, and <em>is-empty</em> methods.
@@ -66,9 +56,9 @@ import edu.princeton.cs.algs4.Queue;
  *  For additional documentation, see <a href="https://algs4.cs.princeton.edu/52trie">Section 5.2</a> of
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
  */
-public class TSTMinus<Value> {
+public class TSTPlus<Value> {
     private int n;              // size
-    private Node<Value> root;   // root of TSTMinus
+    private Node<Value> root;   // root of TSTPlus
     private int maxLength;      // max length of keys
 	
     private static class Node<Value> {
@@ -80,7 +70,7 @@ public class TSTMinus<Value> {
     /**
      * Initializes an empty string symbol table.
      */
-    public TSTMinus() {
+    public TSTPlus() {
     }
 
     /**
@@ -277,11 +267,44 @@ public class TSTMinus<Value> {
      * or null, if no such string.
      */
     public String maxWithPrefix(String prefix) {
-	if (prefix == null)
-            throw new IllegalArgumentException("calls maxWithPrefix() with null argument");
-	String t = null;
-	for (String s : keysWithPrefix(prefix)) t = s;
-	return t;
+	    if (prefix == null)
+            throw new IllegalArgumentException("calls minWithPrefix() with null argument");
+	        
+        StringBuilder answer = new StringBuilder();
+        int len = prefix.length();
+        
+        Node<Value> x = new Node<Value>();
+        if (len == 0)
+            x = root;
+        else
+            x = get(root, prefix, 0);
+
+        // Prefixo não está na TST:
+        if (x == null) return null;
+
+        // Prefixo está na TST, mas não é prefixo de nenhuma outra palavra:
+        if (len != 0 && x.mid == null) {
+            if (x.val == null) return null; // prefixo não é chave.
+            else return prefix; // prefixo é chave e é o máximo.
+        }
+
+        answer.append(prefix);
+        
+        if (len != 0) x = x.mid;
+        
+        boolean finished = false;
+
+        while (!finished) {
+            while (x.right != null) {
+                x = x.right;
+            }
+            answer.append(x.c);
+
+            if (x.mid != null) x = x.mid;
+            else finished = true;
+        }
+        
+	    return answer.toString();
     }
 
     /**
@@ -289,11 +312,46 @@ public class TSTMinus<Value> {
      * or null, if no such string.
      */
     public String minWithPrefix(String prefix) {
-	if (prefix == null)
+	    if (prefix == null)
             throw new IllegalArgumentException("calls minWithPrefix() with null argument");
-	Iterator<String> i = keysWithPrefix(prefix).iterator();
-	if (!i.hasNext()) return null;
-	return i.next();
+	        
+        StringBuilder answer = new StringBuilder();
+        int len = prefix.length();
+        
+        Node<Value> x = new Node<Value>();
+        if (len == 0)
+            x = root;
+        else
+            x = get(root, prefix, 0);
+
+        // Prefixo não está na TST:
+        if (x == null) return null;
+
+        // Se o prefixo é chave, ele é o mínimo:
+        if (len != 0 && x.val != null) return prefix;
+
+        answer.append(prefix);
+        
+        if (len != 0) x = x.mid;
+        boolean finished = false;
+
+        while (!finished) {
+            while (x.left != null) {
+                x = x.left;
+            }
+            answer.append(x.c);
+
+            if (x.val != null) { // chave mínima encontrada. 
+                finished = true;
+                continue; 
+            }
+
+            // Se o nó não tem um valor associado(ou seja,a palavra não é chave),
+            // ele tem um filho do meio (a palavra tem que continuar crescendo).
+            x = x.mid;
+        }
+
+        return answer.toString();
     }
 
     /**
@@ -305,25 +363,36 @@ public class TSTMinus<Value> {
      *     as an iterable, where . is treated as a wildcard character.
      */
     public Iterable<String> keysThatStartWith(String pattern) {
-	TSTMinus<Integer> keys = new TSTMinus<>();
-	    String p = pattern;
-	    while (p.length() <= maxLength) {
-	        for (String s : keysThatMatch(p)) 
-	    	    keys.put(s, 0);
-	        p = p + ".";
-	    }
-        return keys.keys();
+        TSTPlus<Integer> prefixTrie = new TSTPlus<Integer>();
+        int l = pattern.length(); // tamanho l dito no enunciado.
+
+        for (String key: this.keys()) {
+            if (key.length() >= l)
+                prefixTrie.put(key.substring(0, l), 0); // only prefixes of size l.
+        }
+
+        Queue<String> prefixMatchings = (Queue<String>) prefixTrie.keysThatMatch(pattern);
+
+        Queue<String> result = new Queue<String>();
+
+        for (String match: prefixMatchings) {
+            Queue<String> keysThatStartWithPrefix = (Queue<String>) keysWithPrefix(match);
+            for (String k: keysThatStartWithPrefix)
+                result.enqueue(k);  
+        }
+
+        return result;
     }
- 
+
     /**
-     * Unit tests the {@code TSTMinus} data type.
+     * Unit tests the {@code TSTPlus} data type.
      *
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
 
         // build symbol table from standard input
-        TSTMinus<Integer> st = new TSTMinus<Integer>();
+        TSTPlus<Integer> st = new TSTPlus<Integer>();
         for (int i = 0; !StdIn.isEmpty(); i++) {
             String key = StdIn.readString();
             st.put(key, i);
@@ -380,3 +449,4 @@ public class TSTMinus<Value> {
  *  You should have received a copy of the GNU General Public License
  *  along with algs4.jar.  If not, see http://www.gnu.org/licenses.
  ******************************************************************************/
+
