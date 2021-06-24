@@ -13,19 +13,11 @@
   NUSP: 12542821
 
   Referências: 
-    https://www.ime.usp.br/~pf/estruturas-de-dados/aulas/tries.html
-https://beginnersbook.com/2013/12/java-string-substring-method-example/
-https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/suffixtrees.pdf
-https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/TrieST.java
+    - https://www.ime.usp.br/~pf/estruturas-de-dados/aulas/tries.html
+    - https://beginnersbook.com/2013/12/java-string-substring-method-example/
+    - https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/suffixtrees.pdf
+    - https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/TrieST.java
 
-    - API das classes SET e Quick3string presentes em: 
-    https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/
-    - Para plotar o histograma, me baseei no programa Histogram.java
-    (presente em https://www.ime.usp.br/~yoshi/2021i/mac0323/sandbox/2021.05.20/)
-    e na resposta do professor Yoshi na seguinte dúvida do fórum de discussões:
-    https://edisciplinas.usp.br/mod/forum/discuss.php?d=668038
-    - as funções de Hashing usadas(hash, hashU e hashPrime) são uma
-    cópia das presentes nos arquivos .java presentes nos anexos do exercício.
 *********************************************************************/
 
 import java.util.Iterator;
@@ -212,7 +204,7 @@ public class TSTPlus<Value> {
         if (prefix == null) {
             throw new IllegalArgumentException("calls keysWithPrefix() with null argument");
         }
-	if (prefix.length() == 0) return keys();
+	    if (prefix.length() == 0) return keys();
         Queue<String> queue = new Queue<String>();
         Node<Value> x = get(root, prefix, 0);
         if (x == null) return queue;
@@ -382,6 +374,9 @@ public class TSTPlus<Value> {
         }
 
         return result;
+        //if (pattern.length() == 0) return keys();
+        //Queue<String> queue = new Queue<String>();
+
     }
 
     /**
