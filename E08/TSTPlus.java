@@ -13,18 +13,19 @@
   NUSP: 12542821
 
   Referências: 
-    - https://www.ime.usp.br/~pf/estruturas-de-dados/aulas/tries.html
-    - https://beginnersbook.com/2013/12/java-string-substring-method-example/
-    - https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/suffixtrees.pdf
-    - https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/TrieST.java
+    - https://www.geeksforgeeks.org/floor-and-ceil-from-a-bst/
+    - https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/RedBlackBST.java
 
 *********************************************************************/
 
 import java.util.Iterator;
+import java.lang.Character;
 import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Stack;
+
 
 /**
  *  The {@code TSTPlus} class represents an symbol table of key-value
@@ -59,59 +60,193 @@ public class TSTPlus<Value> {
         private Value val;                     // value associated with string
     }
 
-    public String floor(String query) {
-        //if (query == null) throw new IllegalArgumentException("argument to floor() is null");
-        //if (isEmpty()) throw new NoSuchElementException("calls floor() with empty symbol table");
-        ////Node x = floor(root, key);
-        ////if (x == null) throw new NoSuchElementException("argument to floor() is too small");
-        ////else           return x.key;
-//
-        //if (contains(query)) return query;
-        //
-        //StringBuilder temp = new StringBuilder();
-        //Node<Value> x = root;
-//
-        if (query == null) {
-            throw new IllegalArgumentException("calls longestPrefixOf() with null argument");
+    private Character sucessor(Node<Value> x, char c) {
+        
+        Character s = null;
+        while (x != null) {
+            if (x.c > c) {
+                s = x.c;
+                x = x.left;
+            } else if (x.c <= c) {
+                x = x.right;
+            }
         }
-        if (query.length() == 0) return null;
-        int prefixLength = 0;
+
+        return s;
+    }
+
+    private Character predecessor(Node<Value> x, char c) {
+        
+        Character s = null;
+        while (x != null) {
+            if (x.c < c) {
+                s = x.c;
+                x = x.right;
+            } else if (x.c >= c) {
+                x = x.left;
+            }
+        }
+
+        return s;
+    }
+
+    public String floor(String query) {
+        if (query == null) throw new IllegalArgumentException("argument to floor() is null");
+        if (isEmpty()) throw new NoSuchElementException("calls floor() with empty symbol table");
+
+        // O chão da string vazia "" não existe:
+        if (query.length() == 0) throw new NoSuchElementException("argument to floor() is too small");
+
+        // Encontrando o maior prefixo(sem valor) de query na TST 
+        Stack<Node<Value>> parents = new Stack<Node<Value>>(); // guardará o caminho que percorrermos na TST.
+        StringBuilder prefix = new StringBuilder();
         Node<Value> x = root;
+        int prefixLen = 0;
         int i = 0;
         while (x != null && i < query.length()) {
             char c = query.charAt(i);
-            //if      (c < x.c) x = x.left;
-            //else if (c > x.c) x = x.right;
-            //else if (c == x.c) {
-            //    i++;
-            //    if (x.val != null) length = i;
-            //    x = x.mid;
-            //} else {
-            //    
-            //}
-            if (x.c == c) {
+            parents.push(x);
+            if      (c < x.c) x = x.left;
+            else if (c > x.c) x = x.right;
+            else {
+                prefix.append(x.c);
                 i++;
+                prefixLen = i;
                 x = x.mid;
-            } else if (x.left.c == c) {
-                x = x.left;
-            } else if (x.right.c == c) {
-                x = x.right;
             }
-
         }
-        return query.substring(0, length);
 
+        Character predecessor;
+        char nextChar; // = query.charAt(prefixLen);
 
-        return query;
+        // Se não há nenhum prefixo de query na TST:
+        if (prefix.length() == 0) {
+            nextChar = query.charAt(0);
+            predecessor = predecessor(root,nextChar);
+            if (predecessor != null) {
+                prefix.append(predecessor);
+                return maxWithPrefix(prefix.toString());
+            } else throw new NoSuchElementException("argument to floor() is too small");
+        }
+
+        // No caso a seguir, query é uma chave da TST.
+        x = parents.pop();
+        // Voltando ao nó que contém o último caracter de prefix:
+        while (x.c != prefix.charAt(prefixLen-1)) x = parents.pop();
+        if (prefixLen == query.length() && x.val != null) return query; 
+        parents.push(x);
+        
+        Node<Value> aux = new Node<Value>();
+        if (prefixLen == query.length()) {
+            prefixLen--;
+            i--;
+            nextChar = query.charAt(i);
+            prefix.deleteCharAt(i);
+
+            aux = parents.pop();
+        }
+
+        nextChar = query.charAt(prefixLen);
+        i--;
+        while (i >= 0) {
+            x = parents.pop();
+            if (x.c == prefix.charAt(i)) { 
+                aux = x.mid;
+                predecessor = predecessor(aux,nextChar);
+                if (predecessor != null) {
+                    prefix.append(predecessor);
+                    return maxWithPrefix(prefix.toString());
+                }
+                nextChar = prefix.charAt(i);  
+                prefix.deleteCharAt(i);
+                i--;
+            } else continue;
+        }  
+
+        // Se chegou até aqui, estamos procurando o antecessor da primeira letra, então:
+        predecessor = predecessor(root,nextChar);
+            
+        if (predecessor != null) {
+            prefix.append(predecessor);
+            return maxWithPrefix(prefix.toString());
+        } else throw new NoSuchElementException("argument to floor is too small");
     }
 
     public String ceiling(String query) {
-        if (query == null) {
-            throw new IllegalArgumentException("calls longestPrefixOf() with null argument");
-        }
+        if (query == null) throw new IllegalArgumentException("argument to ceiling() is null");
+        if (isEmpty()) throw new NoSuchElementException("calls ceiling() with empty symbol table");
+
+        // O teto da string vazia "" é a primeira string presente na TST:
         if (query.length() == 0) return minWithPrefix("");
 
-        return query;
+        // Encontrando o maior prefixo(sem valor) de query na TST 
+        Stack<Node<Value>> parents = new Stack<Node<Value>>(); // guardará o caminho que percorrermos na TST.
+        StringBuilder prefix = new StringBuilder();
+        Node<Value> x = root;
+        int prefixLen = 0;
+        int i = 0;
+        while (x != null && i < query.length()) {
+            char c = query.charAt(i);
+            parents.push(x);
+            if      (c < x.c) x = x.left;
+            else if (c > x.c) x = x.right;
+            else {
+                prefix.append(x.c);
+                i++;
+                prefixLen = i;
+                x = x.mid;
+            }
+        }
+
+        // No caso a seguir, ou query é uma chave da TST ou é prefixo de alguma outra chave.
+        if (prefixLen == query.length()) return minWithPrefix(prefix.toString());
+
+        char nextChar = query.charAt(prefixLen);
+        Character sucessor; // sucessor de nextChar
+
+        // Se não há nenhum prefixo de query na TST:
+        if (prefix.length() == 0) {
+            sucessor = sucessor(root,nextChar);
+            
+            if (sucessor != null) {
+                prefix.append(sucessor);
+                return minWithPrefix(prefix.toString());
+            } else throw new NoSuchElementException("argument to ceiling() is too big");
+        }
+
+        // Neste caso, 0 <= prefixLen < query.length. Então, pegamos o próximo caracter e achamos
+        // o seu teto na TST.
+
+        x = parents.pop();
+        while (x.c != prefix.charAt(prefixLen-1)) {
+            x = parents.pop();
+        }
+        parents.push(x);
+
+        Node<Value> aux = new Node<Value>();
+        i--;
+        while (i >= 0) {
+            x = parents.pop();
+            if (x.c == prefix.charAt(i)) { 
+                aux = x.mid;
+                sucessor = sucessor(aux,nextChar);
+                if (sucessor != null) {
+                    prefix.append(sucessor);
+                    return minWithPrefix(prefix.toString());
+                }
+                nextChar = prefix.charAt(i);  
+                prefix.deleteCharAt(i);
+                i--;
+            } else continue;
+        }  
+
+        // Se chegou até aqui, estamos procurando o sucessor da primeira letra, então:
+        sucessor = sucessor(root,nextChar);
+            
+        if (sucessor != null) {
+            prefix.append(sucessor);
+            return minWithPrefix(prefix.toString());
+        } else throw new NoSuchElementException("argument to ceiling() is too big");
     }
 
     public boolean isEmpty() {
