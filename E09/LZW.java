@@ -1,26 +1,3 @@
-/*********************************************************************
-
-  AO PREENCHER ESSE CABEÇALHO COM O MEU NOME E O MEU NÚMERO USP,
-  DECLARO QUE SOU O ÚNICO AUTOR E RESPONSÁVEL POR ESSE PROGRAMA.
-  TODAS AS PARTES ORIGINAIS DESSE EXERCÍCIO-PROGRAMA (EP) FORAM
-  DESENVOLVIDAS E IMPLEMENTADAS POR MIM SEGUINDO AS INSTRUÇÕES DESSE
-  EP E QUE PORTANTO NÃO CONSTITUEM PLÁGIO. DECLARO TAMBÉM QUE SOU
-  RESPONSÁVEL POR TODAS AS CÓPIAS DESSE PROGRAMA E QUE EU NÃO
-  DISTRIBUI OU FACILITEI A SUA DISTRIBUIÇÃO. ESTOU CIENTE DE QUE OS
-  CASOS DE PLÁGIO SÃO PUNIDOS COM REPROVAÇÃO DIRETA NA DISCIPLINA.
-
-  NOME: Mateus Latrova Stephanin
-  NUSP: 12542821
-
-  Referências: 
-    - https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html
-    - https://docs.oracle.com/javase/7/docs/api/java/lang/String.html#getChars(int,%20int,%20char[],%20int)
-    - http://java-performance.info/changes-to-string-java-1-7-0_06/
-    - https://stackoverflow.com/questions/4679746/time-complexity-of-javas-substring
-    - implementações baseadas fortemente em LZW.java e TST.java de S&W
-*********************************************************************/
-
-/*
 /**
  *  The {@code LZW} class provides static methods for compressing
  *  and expanding a binary input using LZW compression over the 8-bit extended
@@ -41,16 +18,18 @@
  *  @author Kevin Wayne
  */
 
- import edu.princeton.cs.algs4.BinaryStdIn;
- import edu.princeton.cs.algs4.BinaryStdOut;
+import edu.princeton.cs.algs4.BinaryStdIn;
+import edu.princeton.cs.algs4.BinaryStdOut;
+import edu.princeton.cs.algs4.TST;
 
-public class LZWFixed {
+
+public class LZW {
     private static final int R = 256;        // number of input chars
     private static final int L = 4096;       // number of codewords = 2^W
     private static final int W = 12;         // codeword width
 
     // Do not instantiate.
-    private LZWFixed() { }
+    private LZW() { }
 
     /**
      * Reads a sequence of 8-bit bytes from standard input; compresses
@@ -59,7 +38,7 @@ public class LZWFixed {
      */
     public static void compress() { 
         String input = BinaryStdIn.readString();
-        TSTb<Integer> st = new TSTb<Integer>();
+        TST<Integer> st = new TST<Integer>();
 
         // since TST is not balanced, it would be better to insert in a different order
         for (int i = 0; i < R; i++)
@@ -67,17 +46,13 @@ public class LZWFixed {
 
         int code = R+1;  // R is codeword for EOF
 
-        int t = 0;
-        while (t < input.length()) {
-            String s = st.longestPrefixOf(input,t);  // Find max prefix match s.
+        while (input.length() > 0) {
+            String s = st.longestPrefixOf(input);  // Find max prefix match s.
             BinaryStdOut.write(st.get(s), W);      // Print s's encoding.
-            t += s.length();
-            if (t < input.length() && code < L) {    // Add s to symbol table.
-                //st.put(input.substring(0, t + 1), code++);
-                st.put(s+input.charAt(t), code++);
-            }
-            //mudar funcionamento causado pela seguinte linha:
-            //input = input.substring(t);            // Scan past s in input.
+            int t = s.length();
+            if (t < input.length() && code < L)    // Add s to symbol table.
+                st.put(input.substring(0, t + 1), code++);
+            input = input.substring(t);            // Scan past s in input.
         }
         BinaryStdOut.write(R, W);
         BinaryStdOut.close();
@@ -126,3 +101,27 @@ public class LZWFixed {
     }
 
 }
+
+/******************************************************************************
+ *  Copyright 2002-2020, Robert Sedgewick and Kevin Wayne.
+ *
+ *  This file is part of algs4.jar, which accompanies the textbook
+ *
+ *      Algorithms, 4th edition by Robert Sedgewick and Kevin Wayne,
+ *      Addison-Wesley Professional, 2011, ISBN 0-321-57351-X.
+ *      http://algs4.cs.princeton.edu
+ *
+ *
+ *  algs4.jar is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  algs4.jar is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with algs4.jar.  If not, see http://www.gnu.org/licenses.
+ */

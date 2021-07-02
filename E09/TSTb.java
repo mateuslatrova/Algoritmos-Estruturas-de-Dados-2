@@ -13,50 +13,12 @@
   NUSP: 12542821
 
   Referências: 
-    - https://www.ime.usp.br/~pf/estruturas-de-dados/aulas/tries.html
-    - https://beginnersbook.com/2013/12/java-string-substring-method-example/
-    - https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/suffixtrees.pdf
-    - https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/TrieST.java
-
+    - https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html
+    - https://docs.oracle.com/javase/7/docs/api/java/lang/String.html#getChars(int,%20int,%20char[],%20int)
+    - http://java-performance.info/changes-to-string-java-1-7-0_06/
+    - https://stackoverflow.com/questions/4679746/time-complexity-of-javas-substring
+    - implementações baseadas fortemente em LZW.java e TST.java de S&W
 *********************************************************************/
-
-/******************************************************************************
- *  Compilation:  javac TST.java
- *  Execution:    java TST < words.txt
- *  Dependencies: StdIn.java
- *  Data files:   https://algs4.cs.princeton.edu/52trie/shellsST.txt
- *
- *  Symbol table with string keys, implemented using a ternary search
- *  trie (TST).
- *
- *
- *  % java TST < shellsST.txt
- *  keys(""):
- *  by 4
- *  sea 6
- *  sells 1
- *  she 0
- *  shells 3
- *  shore 7
- *  the 5
- *
- *  longestPrefixOf("shellsort"):
- *  shells
- *
- *  keysWithPrefix("shor"):
- *  shore
- *
- *  keysThatMatch(".he.l."):
- *  shells
- *
- *  % java TST
- *  theory the now is the time for all good men
- *
- *  Remarks
- *  --------
- *    - can't use a key that is the empty string ""
- *
- ******************************************************************************/
 
 /**
  *  The {@code TST} class represents an symbol table of key-value
@@ -80,7 +42,13 @@
  *  For additional documentation, see <a href="https://algs4.cs.princeton.edu/52trie">Section 5.2</a> of
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
  */
-public class TST<Value> {
+
+import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+
+
+public class TSTb<Value> {
     private int n;              // size
     private Node<Value> root;   // root of TST
 
@@ -93,7 +61,7 @@ public class TST<Value> {
     /**
      * Initializes an empty string symbol table.
      */
-    public TST() {
+    public TSTb() {
     }
 
     /**
@@ -205,6 +173,40 @@ public class TST<Value> {
         return query.substring(0, length);
     }
 
+    // Método pedido no exercício:
+    public String longestPrefixOf(String query, int t) {
+        // Versão lazy:
+        //return longestPrefixOf(query.substring(t)); 
+        
+        //int substSize = query.length-t;
+        //char[] subst = query; //new char[substSize];
+        ////query.getChars(t, query.length(), substAux, t);
+        //String substring = new String(subst,t,substSize);
+        //return longestPrefixOf(substring);
+
+        if (query == null) {
+            throw new IllegalArgumentException("calls longestPrefixOf() with null argument");
+        }
+        if (query.length() == 0) return null;
+
+        StringBuilder lp = new StringBuilder();
+        //int length = 0;
+        Node<Value> x = root;
+        int i = t;
+        while (x != null && i < query.length()) {
+            char c = query.charAt(i);
+            if      (c < x.c) x = x.left;
+            else if (c > x.c) x = x.right;
+            else {
+                lp.append(query.charAt(i));
+                i++;
+                //if (x.val != null) length = i;
+                x = x.mid;
+            }
+        }
+        return lp.toString();
+    }
+
     /**
      * Returns all keys in the symbol table as an {@code Iterable}.
      * To iterate over all of the keys in the symbol table named {@code st},
@@ -283,7 +285,7 @@ public class TST<Value> {
     public static void main(String[] args) {
 
         // build symbol table from standard input
-        TST<Integer> st = new TST<Integer>();
+        TSTb<Integer> st = new TSTb<Integer>();
         for (int i = 0; !StdIn.isEmpty(); i++) {
             String key = StdIn.readString();
             st.put(key, i);
