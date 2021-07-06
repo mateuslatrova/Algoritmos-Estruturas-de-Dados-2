@@ -1,0 +1,45 @@
+$ javac -version
+javac 11.0.7
+$ java -version
+openjdk version "11.0.7" 2020-04-14
+OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.7+10)
+OpenJDK 64-Bit Server VM AdoptOpenJDK (build 11.0.7+10, mixed mode)
+
+$ java-algs4 -Xss10m WordComponents DATA/Pwords > /dev/null
+Time to produce wordgraph: 4.011
+275502 vertices and 548738 edges
+Ave degree: 3.983550028674928
+32814 components
+$ java-algs4 RandomWords 10 888 < DATA/Pwords > 10words
+$ java-algs4 -Xss50m WordLoop DATA/Pwords < 10words
+Time to produce wordgraph: 4.035
+funcionares: word loop with funcionares exists
+fatorais: word loop with fatorais exists
+profirais: word loop with profirais exists
+festejar: word loop with festejar exists
+legalizasse: word loop with legalizasse exists
+evidentes: word loop with evidentes exists
+rebaixou: NO WORD LOOP!
+encalharíamos: NO WORD LOOP!
+almocemo: NO WORD LOOP!
+infestemo: word loop with infestemo exists
+$ java-algs4 RandomWords 10000 88888888 < DATA/Pwords > 10000words
+$ md5 10000words
+MD5 (10000words) = f84f657f042d356a4424ebca2677c267
+$ time java-algs4 -Xss50m WordLoop DATA/Pwords < 10000words | md5
+Time to produce wordgraph: 4.022
+876a3b291d4ecd71c362486f34fec2cf
+
+real	0m30.617s
+user	0m47.891s
+sys	0m0.948s
+$ java-algs4 RandomWords 20000 323323 < DATA/Pwords > 20000words
+$ md5 20000words
+MD5 (20000words) = fb788c8d5e021771ac46a26ece8575d7
+$ time java-algs4 -Xss50m WordLoop DATA/Pwords < 20000words | md5
+Time to produce wordgraph: 3.874
+1b235ee5ef79410d10ed81ab9526edc7
+
+real	0m54.890s
+user	1m23.865s
+sys	0m1.365s
