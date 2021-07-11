@@ -92,8 +92,8 @@ public class WordGraphPlain {
 		String t = a; a = b; b = t;
 	    }
 	    for (int j = 0; j < b.length(); j++) {
-		    String k = b.substring(0, j) + b.substring(j + 1);
-		    if (k.equals(a)) return true;
+		String k = b.substring(0, j) + b.substring(j + 1);
+		if (k.equals(a)) return true;
 	    }
 	    return false;
 	}

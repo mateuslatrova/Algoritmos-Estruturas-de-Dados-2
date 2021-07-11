@@ -29,17 +29,18 @@ import edu.princeton.cs.algs4.Stopwatch;
 
 public class WordComponents
 {
-    public static void main(String[] args) {
-	    In in; 
-	    if (args.length == 0) in = new In();
-	    else  in = new In(args[0]);
-	    Stopwatch sw = new Stopwatch();
+    public static void main(String[] args)
+    {
+	In in; 
+	if (args.length == 0) in = new In();
+	else  in = new In(args[0]);
+	Stopwatch sw = new Stopwatch();
         WordGraph wg = new WordGraph(in);
-	    System.err.println("Time to produce wordgraph: " + sw.elapsedTime());
+	System.err.println("Time to produce wordgraph: " + sw.elapsedTime());
         Graph G = wg.graph();
 
-	    System.err.println(G.V() + " vertices and " + G.E() + " edges");
-	    System.err.println("Ave degree: " + 2.0*G.E()/G.V());
+	System.err.println(G.V() + " vertices and " + G.E() + " edges");
+	System.err.println("Ave degree: " + 2.0*G.E()/G.V());
 
         CC cc = new CC(G);
 

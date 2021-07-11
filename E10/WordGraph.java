@@ -21,11 +21,16 @@
 *********************************************************************/
 
 import edu.princeton.cs.algs4.TST;
+
+import java.util.Iterator;
+
 import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stopwatch;
+import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.MSD;
 
 /**
  * Based on WordLadder.java
@@ -34,6 +39,7 @@ import edu.princeton.cs.algs4.Stopwatch;
 public class WordGraph {
     private TST<Integer> st; // string -> index
     private String[] keys;           // index  -> string
+    private boolean[] adj;
     private Graph graph;             // the underlying graph
 
     private boolean sameLength = true;      // all words have the same length
@@ -54,6 +60,9 @@ public class WordGraph {
             }
         }
 
+        //long n = st.size();
+        //adj = new boolean[n*n];
+
         // inverted index to get string keys in an array
         keys = new String[st.size()];
         for (String name : st.keys()) {
@@ -62,22 +71,50 @@ public class WordGraph {
 
         // second pass builds the graph
         graph = new Graph(st.size());
-	    for (int i = 0; i < keys.length; i++) {
-	        String word1 = keys[i];
-	        for (int j = i + 1; j < keys.length; j++) {
-		        String word2 = keys[j];
-		        if (isNeighbor(word1, word2)) {
-		            graph.addEdge(st.get(word1), st.get(word2));
-		        }
-	        }
-	    }
+	  
+        for (int i = 0; i < keys.length; i++) {
+            String word = keys[i];//sortedKeys[i];
+            
+            int L = word.length();
+            for (int j = 0; j < L; j++){
+                StringBuilder lessSize = new StringBuilder(word); 
+                lessSize.deleteCharAt(j);
+                if (lessSize.length() != 0) {
+                    Integer lessIndex = st.get(lessSize.toString());
+                    if (lessIndex != null) {
+                        if (!hasEdge(graph,i,lessIndex)) {
+                            //adj[i*n+lessIndex] = adj[lessIndex*n+i] = true;
+                            graph.addEdge(i,lessIndex);
+                        }
+                    }
+                }
+
+                StringBuilder sameSize = new StringBuilder(word); 
+                sameSize.setCharAt(j,'.');
+                Iterable<String> sameMatches = st.keysThatMatch(sameSize.toString());
+                for (String s: sameMatches) {
+                    Integer sIndex = st.get(s);
+                    if (i != sIndex && !hasEdge(graph,i,sIndex)) {
+                        //adj[i*n+sIndex] = adj[n*sIndex+i] = true;
+                        graph.addEdge(i,sIndex);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean hasEdge(Graph g, int u, int v) {
+        boolean found = false;
+        for (int w: g.adj(u)) {
+            if (w == v) return true;
+        }
+        return false;
     }
 
     // return true if two strings differ in exactly one letter
     // or the shorter string can be obtained from the longer string
     // deleting exactly one letter
     public static boolean isNeighbor(String a, String b) {
-	    // same size.
         if (a.length() == b.length()) { 
 	        int differ = 0;
 	        for (int i = 0; i < a.length(); i++) {
