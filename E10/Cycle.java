@@ -13,21 +13,22 @@
 
   Referências: 
     - https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html
-    - https://docs.oracle.com/javase/7/docs/api/java/lang/String.html#getChars(int,%20int,%20char[],%20int)
-    - http://java-performance.info/changes-to-string-java-1-7-0_06/
-    - https://stackoverflow.com/questions/4679746/time-complexity-of-javas-substring
-    - implementações baseadas fortemente em LZW.java e TST.java de S&W
+    - https://www.cs.princeton.edu/courses/archive/spring19/cos226/lectures/41UndirectedGraphs.pdf
+    - Cycle.java foi uma modificação de Cycle.java de S&W(https://algs4.cs.princeton.edu/41graph/Cycle.java.html)
 *********************************************************************/
 
 import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.NonrecursiveDFS;
+import java.util.Iterator;
 
 public class Cycle {
     private boolean[] marked;
     private int[] edgeTo;
     private Stack<Integer> cycle;
+    private int belongsToCycle; // we wanna find out if s belongs to any cycle.
 
     /**
      * Determines whether the undirected graph {@code G} has a cycle and,
@@ -49,18 +50,12 @@ public class Cycle {
                 dfs(G, -1, v);
     }
 
-    // O(V+E). DFS.
+    // O(V+E). DFS a partir de s.
     public Cycle(Graph G, int s) {
-        // need special case to identify parallel edge as a cycle
-        if (hasParallelEdges(G)) return;
-
-        // don't need special case to identify self-loop as a cycle
-        // if (hasSelfLoop(G)) return;
-
+        belongsToCycle = s;
         marked = new boolean[G.V()];
         edgeTo = new int[G.V()];
-        //for (int v = 0; v < G.V(); v++)
-        dfs(G, -1, s);
+        dfsCycle(G, -1, s);
     }
 
     // devolve o comprimento do circuito encontrado.
@@ -69,6 +64,30 @@ public class Cycle {
         if (hasCycle()) return cycle.size()-1;
         //else:
         return -1;
+    }
+
+    private void dfsCycle(Graph G, int u, int v) {
+        marked[v] = true;
+        for (int w : G.adj(v)) {
+
+            // short circuit if cycle already found
+            if (cycle != null) return;
+
+            if (!marked[w]) {
+                edgeTo[w] = v;
+                dfsCycle(G, v, w);
+            }
+
+            // check for cycle (but disregard reverse of edge leading to v)
+            else if (w != u && w == belongsToCycle) {
+                cycle = new Stack<Integer>();
+                for (int x = v; x != w; x = edgeTo[x]) {
+                    cycle.push(x);
+                }
+                cycle.push(w);
+                cycle.push(v);
+            }
+        }
     }
 
     // does this graph have a self loop?

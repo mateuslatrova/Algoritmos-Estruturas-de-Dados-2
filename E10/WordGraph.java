@@ -14,23 +14,17 @@
 
   Referências: 
     - https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html
-    - https://docs.oracle.com/javase/7/docs/api/java/lang/String.html#getChars(int,%20int,%20char[],%20int)
-    - http://java-performance.info/changes-to-string-java-1-7-0_06/
-    - https://stackoverflow.com/questions/4679746/time-complexity-of-javas-substring
-    - implementações baseadas fortemente em LZW.java e TST.java de S&W
+    - https://www.cs.princeton.edu/courses/archive/spring19/cos226/lectures/41UndirectedGraphs.pdf
+    - Cycle.java foi uma modificação de Cycle.java de S&W(https://algs4.cs.princeton.edu/41graph/Cycle.java.html)
 *********************************************************************/
 
-import edu.princeton.cs.algs4.TST;
-
 import java.util.Iterator;
-
+import edu.princeton.cs.algs4.TST;
 import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stopwatch;
-import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.MSD;
 
 /**
  * Based on WordLadder.java
@@ -39,7 +33,6 @@ import edu.princeton.cs.algs4.MSD;
 public class WordGraph {
     private TST<Integer> st; // string -> index
     private String[] keys;           // index  -> string
-    private boolean[] adj;
     private Graph graph;             // the underlying graph
 
     private boolean sameLength = true;      // all words have the same length
@@ -59,9 +52,6 @@ public class WordGraph {
 		        }
             }
         }
-
-        //long n = st.size();
-        //adj = new boolean[n*n];
 
         // inverted index to get string keys in an array
         keys = new String[st.size()];
@@ -83,7 +73,6 @@ public class WordGraph {
                     Integer lessIndex = st.get(lessSize.toString());
                     if (lessIndex != null) {
                         if (!hasEdge(graph,i,lessIndex)) {
-                            //adj[i*n+lessIndex] = adj[lessIndex*n+i] = true;
                             graph.addEdge(i,lessIndex);
                         }
                     }
@@ -95,7 +84,6 @@ public class WordGraph {
                 for (String s: sameMatches) {
                     Integer sIndex = st.get(s);
                     if (i != sIndex && !hasEdge(graph,i,sIndex)) {
-                        //adj[i*n+sIndex] = adj[n*sIndex+i] = true;
                         graph.addEdge(i,sIndex);
                     }
                 }
@@ -104,7 +92,6 @@ public class WordGraph {
     }
 
     private boolean hasEdge(Graph g, int u, int v) {
-        boolean found = false;
         for (int w: g.adj(u)) {
             if (w == v) return true;
         }
