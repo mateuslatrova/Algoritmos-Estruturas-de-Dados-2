@@ -1,0 +1,52 @@
+$ javac -version
+javac 11.0.7
+$ java -version
+openjdk version "11.0.7" 2020-04-14
+OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.7+10)
+OpenJDK 64-Bit Server VM AdoptOpenJDK (build 11.0.7+10, mixed mode)
+
+$ java-algs4 InstanceGenerator 1000000 1017625 3232021 | md5
+db41a2861b2716894f5ea888da37f6bc
+$ java-algs4 InstanceGenerator 1000000 1017625 3232021 | java-algs4 Check2SAT
+Time to check: 5.636s
+Satisfiable!
+$ java-algs4 InstanceGenerator 1000000 1017650 3232021 | md5
+9d5975f6debd97d7b2b5e3315892071e
+$ java-algs4 InstanceGenerator 1000000 1017650 3232021 | java-algs4 Check2SAT
+Time to check: 3.767s
+Not satisfiable!
+$ java-algs4 InstanceGenerator 2000000 2020300 3232021 | md5
+e639c6b2a3d370548c3f823b2e6c0bc8
+$ java-algs4 InstanceGenerator 2000000 2020300 3232021 | java-algs4 Check2SAT
+Time to check: 10.228s
+Satisfiable!
+$ java-algs4 InstanceGenerator 2000000 2020325 3232021 | md5
+8a7d65dccf19ffecbcf8f7784a97c1b4
+$ java-algs4 InstanceGenerator 2000000 2020325 3232021 | java-algs4 Check2SAT
+Time to check: 8.666s
+Not satisfiable!
+
+$ java-algs4 Estimate 100000 100000 100 888 - | md5
+Simulation time: 26.527 seconds
+Fraction satisfiable: 0.94
+d9908e94549e63caf604345a30c3b6b3
+$ java-algs4 Estimate 100000 102500 100 888 - | md5
+Simulation time: 25.681 seconds
+Fraction satisfiable: 0.64
+73dec1c2ce9c66c0772a57bff0183e75
+$ java-algs4 Estimate 100000 105000 100 888 - | md5
+Simulation time: 25.789 seconds
+Fraction satisfiable: 0.14
+d9754cb94d5de4d315bb512d32320d56
+$ java-algs4 Estimate 200000 200000 200 888 - | md5
+Simulation time: 120.661 seconds
+Fraction satisfiable: 0.88
+81df0520691c47236826b6e4ca58cf1b
+$ java-algs4 Estimate 200000 203000 200 888 - | md5
+Simulation time: 123.973 seconds
+Fraction satisfiable: 0.69
+3a2bf8b007b9dff6c9cd8c218d04163d
+$ java-algs4 Estimate 200000 208000 200 888 - | md5
+Simulation time: 115.99 seconds
+Fraction satisfiable: 0.125
+ad28b300896e3f4504de300176fc01ad
